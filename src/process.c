@@ -36,6 +36,32 @@ process_getegid(mrb_state *mrb, mrb_value mod)
   return mrb_fixnum_value((mrb_int)getegid());
 }
 
+static mrb_value
+process_setuid(mrb_state *mrb, mrb_value mod)
+{
+  mrb_int uid;
+
+  /* TODO support username string */
+  mrb_get_args(mrb, "i", &uid);
+#if defined(HAVE_SETRESUID)
+  if (setresuid(uid, -1, -1) < 0) mrb_sys_fail(mrb, 0);
+#elif defined HAVE_SETREUID
+  if (setreuid(uid, -1) < 0) mrb_sys_fail(mrb, 0);
+#elif defined HAVE_SETRUID
+  if (setruid(uid) < 0) mrb_sys_fail(mrb, 0);
+#elif defined HAVE_SETUID
+  {
+    if (geteuid() == uid) {
+      if (setuid(uid) < 0) mrb_sys_fail(mrb, 0);
+    }
+    else {
+      mrb_notimplement(mrb);
+    }
+  }
+#endif
+  return mrb_fixnum_value(uid);
+}
+
 void
 mrb_mruby_process_ext_gem_init(mrb_state *mrb)
 {
@@ -44,6 +70,7 @@ mrb_mruby_process_ext_gem_init(mrb_state *mrb)
   mrb_define_class_method(mrb, process, "gid", process_getgid, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, process, "euid", process_geteuid, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, process, "egid", process_getegid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, process, "uid=", process_setuid, MRB_ARGS_REQ(1));
 }
 
 void

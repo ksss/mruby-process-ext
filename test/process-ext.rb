@@ -13,3 +13,7 @@ end
 assert 'Process.egid' do
   assert_kind_of Fixnum, Process.egid
 end
+
+assert 'Process.uid=' do
+  assert_equal Process.uid, Process.uid = Process.uid
+end
