@@ -17,3 +17,11 @@ end
 assert 'Process.uid=' do
   assert_equal Process.uid, Process.uid = Process.uid
 end
+
+assert 'Process::Sys.setuid' do
+  begin
+    assert_nil Process::Sys.setuid(Process.uid)
+  rescue NotImplementedError
+    skip 'This environment not have system call setuid(1)'
+  end
+end

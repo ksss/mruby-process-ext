@@ -65,6 +65,20 @@ process_setuid(mrb_state *mrb, mrb_value mod)
   return mrb_fixnum_value(uid);
 }
 
+#if defined HAVE_SETUID
+static mrb_value
+process_sys_setuid(mrb_state *mrb, mrb_value mod)
+{
+  mrb_int uid;
+  mrb_get_args(mrb, "i", &uid);
+  if (setuid(uid) < 0)
+    mrb_sys_fail(mrb, 0);
+  return mrb_nil_value();
+}
+#else
+#  define process_sys_setuid mrb_notimplement_m
+#endif
+
 void
 mrb_mruby_process_ext_gem_init(mrb_state *mrb)
 {
@@ -74,6 +88,9 @@ mrb_mruby_process_ext_gem_init(mrb_state *mrb)
   mrb_define_class_method(mrb, process, "euid", process_geteuid, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, process, "egid", process_getegid, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, process, "uid=", process_setuid, MRB_ARGS_REQ(1));
+
+  struct RClass *process_sys = mrb_define_module_under(mrb, process, "Sys");
+  mrb_define_class_method(mrb, process_sys, "setuid", process_sys_setuid, MRB_ARGS_REQ(1));
 }
 
 void
