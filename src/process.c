@@ -1,4 +1,5 @@
 #include "mruby.h"
+#include "mruby/error.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 typedef unsigned int uid_t;
@@ -11,6 +12,8 @@ gid_t getegid(void) { return 0; }
 #include <unistd.h>
 #include <sys/types.h>
 #endif
+
+#include "extconf.h"
 
 static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
