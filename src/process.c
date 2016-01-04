@@ -136,6 +136,10 @@ mrb_mruby_process_ext_gem_init(mrb_state *mrb)
   mrb_define_class_method(mrb, process, "uid=", process_setuid, MRB_ARGS_REQ(1));
 
   struct RClass *process_sys = mrb_define_module_under(mrb, process, "Sys");
+  mrb_define_class_method(mrb, process_sys, "getuid", process_getuid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, process_sys, "getgid", process_getgid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, process_sys, "geteuid", process_geteuid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, process_sys, "getegid", process_getegid, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, process_sys, "setuid", process_sys_setuid, MRB_ARGS_REQ(1));
   mrb_define_class_method(mrb, process_sys, "setruid", process_sys_setruid, MRB_ARGS_REQ(1));
   mrb_define_class_method(mrb, process_sys, "setreuid", process_sys_setreuid, MRB_ARGS_REQ(2));

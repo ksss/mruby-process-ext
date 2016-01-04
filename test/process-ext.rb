@@ -18,6 +18,22 @@ assert 'Process.uid=' do
   assert_equal Process.uid, Process.uid = Process.uid
 end
 
+assert 'Process::Sys.getuid' do
+  assert_true Process.uid == Process::Sys.getuid
+end
+
+assert 'Process::Sys.getgid' do
+  assert_true Process.gid == Process::Sys.getgid
+end
+
+assert 'Process::Sys.geteuid' do
+  assert_true Process.euid == Process::Sys.geteuid
+end
+
+assert 'Process::Sys.getegid' do
+  assert_true Process.egid == Process::Sys.getegid
+end
+
 assert 'Process::Sys.setuid' do
   begin
     assert_nil Process::Sys.setuid(Process.uid)
