@@ -22,7 +22,7 @@ assert 'Process::Sys.setuid' do
   begin
     assert_nil Process::Sys.setuid(Process.uid)
   rescue NotImplementedError
-    skip 'This environment not have system call setuid(1)'
+    skip 'This environment not have system call setuid(2)'
   end
 end
 
@@ -30,6 +30,6 @@ assert 'Process::Sys.setruid' do
   begin
     assert_nil Process::Sys.setruid(Process.uid)
   rescue NotImplementedError
-    skip 'This environment not have system call setruid(1)'
+    skip 'This environment not have system call setruid(2)'
   end
 end
