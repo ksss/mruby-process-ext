@@ -93,6 +93,20 @@ process_sys_setruid(mrb_state *mrb, mrb_value mod)
 #  define process_sys_setruid mrb_notimplement_m
 #endif
 
+#if defined HAVE_SETREUID
+static mrb_value
+process_sys_setreuid(mrb_state *mrb, mrb_value mod)
+{
+  mrb_int rid, eid;
+  mrb_get_args(mrb, "ii", &rid, &eid);
+  if (setreuid(rid, eid) < 0)
+    mrb_sys_fail(mrb, 0);
+  return mrb_nil_value();
+}
+#else
+#  define process_sys_setreuid mrb_notimplement_m
+#endif
+
 void
 mrb_mruby_process_ext_gem_init(mrb_state *mrb)
 {
@@ -106,6 +120,7 @@ mrb_mruby_process_ext_gem_init(mrb_state *mrb)
   struct RClass *process_sys = mrb_define_module_under(mrb, process, "Sys");
   mrb_define_class_method(mrb, process_sys, "setuid", process_sys_setuid, MRB_ARGS_REQ(1));
   mrb_define_class_method(mrb, process_sys, "setruid", process_sys_setruid, MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb, process_sys, "setreuid", process_sys_setreuid, MRB_ARGS_REQ(2));
 }
 
 void
