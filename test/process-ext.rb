@@ -42,3 +42,10 @@ assert 'Process::Sys.setreuid' do
   end
 end
 
+assert 'Process::Sys.setresuid' do
+  begin
+    assert_nil Process::Sys.setresuid(Process.uid, -1, -1)
+  rescue NotImplementedError
+    skip 'This environment not have system call setresuid(2)'
+  end
+end
