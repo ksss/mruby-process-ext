@@ -1,5 +1,4 @@
 require 'mkmf'
-require 'rake/clean'
 
 # patch for old mkmf bug
 if Gem::Version.create(RUBY_VERSION) <= Gem::Version.create('1.9.3')
@@ -10,12 +9,8 @@ if Gem::Version.create(RUBY_VERSION) <= Gem::Version.create('1.9.3')
   end
 end
 # patch end
-
-dir = File.dirname(__FILE__)
-extconf = "#{dir}/src/extconf.h"
-
-file extconf => [__FILE__, "#{dir}/src/process.c"] do |t|
-  File.unlink(t.name) if File.exist?(t.name)
+build_extconf = lambda do |fn|
+  return if File.exist?(fn)
 
   # TODO
   # if open this block
@@ -28,14 +23,14 @@ file extconf => [__FILE__, "#{dir}/src/process.c"] do |t|
     have_func 'setuid'
   end
 
-  create_header t.name
+  create_header fn
 end
-
-CLOBBER << extconf
 
 MRuby::Gem::Specification.new('mruby-process-ext') do |spec|
   spec.license = 'MIT'
   spec.author  = 'ksss <co000ri@gmail.com>'
 
-  Rake::Task[extconf].invoke
+  FileUtils.mkdir_p build_dir
+  build_extconf["#{build_dir}/extconf.h"]
+  cc.include_paths << build_dir
 end
